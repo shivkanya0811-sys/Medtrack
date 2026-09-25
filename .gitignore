@@ -1,0 +1,10 @@
+__pycache__/
+**/__pycache__/
+.venv/
+venv/
+.env
+*.pyc
+*.pem
+aws_access_key_id
+aws_secret_access_key
+credentials

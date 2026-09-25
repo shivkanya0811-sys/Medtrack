@@ -1,0 +1,16 @@
+<!doctype html><html><head><title>Dashboard - MedTrack</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body><nav><b>MedTrack</b><span>{{user.Name}} (PATIENT)</span><a href="{{ url_for('logout') }}">Logout</a></nav><main>
+{% with messages=get_flashed_messages() %}{% for m in messages %}<p class="msg">{{m}}</p>{% endfor %}{% endwith %}
+<h2>Patient Dashboard</h2>
+<div class="card"><h3>Book Appointment</h3><form method="post" action="{{ url_for('appointment') }}">
+<input type="hidden" name="patient_id" value="{{patient.PatientID if patient else ''}}">
+<select name="doctor_id" required><option value="">Select Doctor</option>{% for d in doctors %}<option value="{{d.DoctorID}}">Dr. {{d.Name}} — {{d.Specialization}}</option>{% endfor %}</select>
+<input name="date" type="date" required><input name="time" type="time" required><button>Book Appointment</button></form></div>
+<div class="card"><h3>My Appointments</h3>
+{% for a in appointments %}<p><b>{{doctor_map.get(a.DoctorID, {}).get('Name', 'Doctor')}}</b> | {{a.Date}} {{a.Time}} | <b>{{a.Status}}</b></p>
+{% else %}<p>No appointments found.</p>{% endfor %}</div>
+<div class="card"><h3>Diagnosis Reports</h3>
+{% for d in diagnoses if d.PatientID == (patient.PatientID if patient else '') %}<p><b>{{d.DiagnosisID}}</b> | Appointment: {{d.AppointmentID}} | {{d.Report}} | {{d.Date}}</p>
+{% else %}<p>No diagnosis reports.</p>{% endfor %}</div>
+<div class="card"><h3>Notifications</h3>
+{% for n in notifications %}<p>{{n.Message}}<br><small>{{n.Timestamp}}</small></p>{% else %}<p>No notifications.</p>{% endfor %}</div>
+</main></body></html>

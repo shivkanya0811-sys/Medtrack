@@ -1,0 +1,6 @@
+<!doctype html><html><head><title>Register - MedTrack</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body><div class="card"><h2>MedTrack Registration</h2>{% with messages=get_flashed_messages() %}{% for message in messages %}<p class="msg">{{ message }}</p>{% endfor %}{% endwith %}<form method="post">
+<input name="name" placeholder="Full Name" required><input name="email" type="email" placeholder="Email" required><input name="phone" placeholder="Phone" required>
+<select name="role"><option value="PATIENT">Patient</option><option value="DOCTOR">Doctor</option></select>
+<input name="age" placeholder="Age (patient)"><input name="medical_history" placeholder="Medical history (patient)">
+<input name="specialization" placeholder="Specialization (doctor)"><input name="qualification" placeholder="Qualification (doctor)"><input name="experience" placeholder="Experience years (doctor)">
+<input name="password" type="password" placeholder="Password (8+ characters)" minlength="8" required><button>Register</button></form><a href="{{ url_for('login') }}">Already have an account? Login</a></div></body></html>

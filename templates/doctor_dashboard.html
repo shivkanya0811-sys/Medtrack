@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><title>Doctor Dashboard - MedTrack</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><nav><b>MedTrack</b><span>{{user.Name}} (DOCTOR)</span><a href="{{ url_for('logout') }}">Logout</a></nav><main>
+{% with messages=get_flashed_messages() %}{% for m in messages %}<p class="msg">{{m}}</p>{% endfor %}{% endwith %}
+<h2>Doctor Dashboard</h2>
+<div class="card"><h3>Doctor Profile</h3>
+<p><b>Doctor ID:</b> {{doctor.DoctorID if doctor else 'Not available'}}</p>
+<p><b>Specialization:</b> {{doctor.Specialization if doctor else 'Not available'}}</p>
+<p><b>Qualification:</b> {{doctor.Qualification if doctor else 'Not available'}}</p>
+<p><b>Experience:</b> {{doctor.Experience if doctor else 'Not available'}} years</p></div>
+
+<div class="card"><h3>Search Appointment</h3>
+<form method="get" action="{{ url_for('doctor_search') }}">
+<input name="q" value="{{search_term}}" placeholder="Patient name, date, status or ID">
+<button>Search</button><a class="button-link" href="{{ url_for('dashboard') }}">Clear</a>
+</form></div>
+
+<div class="card"><h3>Upcoming / Assigned Appointments</h3>
+{% if appointments %}
+{% for a in appointments %}
+<div class="appointment-row">
+<p><b>{{a.AppointmentID}}</b> | {{a.Date}} {{a.Time}} | Patient: {{patient_map.get(a.PatientID, {}).get('Name', a.PatientID)}} | <b>{{a.Status}}</b></p>
+<form method="post" action="{{ url_for('update_appointment_status', appointment_id=a.AppointmentID) }}">
+<select name="status" required>
+<option value="">Update status</option><option>CONFIRMED</option><option>COMPLETED</option><option>CANCELED</option><option>REJECTED</option>
+</select><button>Update</button></form>
+</div>
+{% endfor %}
+{% else %}<p>No appointments found.</p>{% endif %}
+</div>
+
+<div class="card"><h3>Patient Details</h3>
+{% for p in patients %}<p><b>{{p.Name}}</b> — Age {{p.Age}} — Medical History: {{p.MedicalHistory}}</p>{% else %}<p>No patient details are available yet.</p>{% endfor %}
+</div>
+
+<div class="card"><h3>Add Diagnosis Report</h3>
+<form method="post" action="{{ url_for('diagnosis') }}">
+<select name="appointment_id" required>
+<option value="">Select an assigned appointment</option>
+{% for a in diagnosis_appointments %}<option value="{{a.AppointmentID}}">{{a.Date}} {{a.Time}} - {{patient_map.get(a.PatientID, {}).get('Name', a.PatientID)}} - {{a.Status}}</option>{% endfor %}
+</select>
+{% if not diagnosis_appointments %}<p>No assigned appointments are available for a report.</p>{% endif %}
+<textarea name="report" placeholder="Diagnosis report" required></textarea>
+<button>Save Diagnosis</button></form></div>
+
+<div class="card"><h3>Notifications</h3>
+{% for n in notifications %}<p>{{n.Message}}<br><small>{{n.Timestamp}}</small></p>{% else %}<p>No notifications.</p>{% endfor %}
+</div>
+</main></body></html>
